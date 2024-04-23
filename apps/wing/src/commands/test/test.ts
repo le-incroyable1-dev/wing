@@ -210,6 +210,7 @@ export async function renderTestReport(
     // if the test failed, add the error message and trace
     if (result.error) {
       const err = await prettyPrintError(result.error, { chalk });
+      console.log(err);
       details.push(...err.split("\n"));
     }
 
@@ -225,7 +226,7 @@ export async function renderTestReport(
     } else {
       firstRow.push(chalk.gray("─"));
     }
-
+    
     firstRow.push(basename(entrypoint));
 
     if (result.path?.length > 0) {
