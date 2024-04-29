@@ -3,7 +3,7 @@ import { satisfies } from "compare-versions";
 
 import { optionallyDisplayDisclaimer } from "./analytics/disclaimer";
 import { exportAnalytics } from "./analytics/export";
-import { loadEnvVariables } from "./env";
+import { SNAPSHOTS_HELP } from "./commands/test/snapshots-help";
 import { currentPackage, projectTemplateNames } from "./util";
 
 export const PACKAGE_VERSION = currentPackage.version;
@@ -17,13 +17,10 @@ if (!SUPPORTED_NODE_VERSION) {
 }
 
 const DEFAULT_PLATFORM = ["sim"];
+
 let analyticsExportFile: Promise<string | undefined> | undefined;
 
 function runSubCommand(subCommand: string, path: string = subCommand) {
-  loadEnvVariables({
-    mode: subCommand,
-  });
-
   return async (...args: any[]) => {
     try {
       // paths other than the root path aren't working unless specified in the path arg
@@ -180,6 +177,23 @@ async function main() {
     .action(runSubCommand("compile"));
 
   program
+    .command("secrets")
+    .description("Manage secrets")
+    .argument("[entrypoint]", "program .w entrypoint")
+    .option(
+      "-t, --platform <platform> --platform <platform>",
+      "Target platform provider (builtin: sim, tf-aws, tf-azure, tf-gcp, awscdk)",
+      collectPlatformVariadic,
+      DEFAULT_PLATFORM
+    )
+    .option("-v, --value <value>", "Platform-specific value in the form KEY=VALUE", addValue, [])
+    .option("--values <file>", "File with platform-specific values (TOML|YAML|JSON)")
+    .addOption(new Option("--list", "List required application secrets"))
+    .hook("preAction", progressHook)
+    .hook("preAction", collectAnalyticsHook)
+    .action(runSubCommand("secrets"));
+
+  program
     .command("test")
     .description(
       "Compiles a Wing program and runs all functions with the word 'test' or start with 'test:' in their resource identifiers"
@@ -191,12 +205,19 @@ async function main() {
       collectPlatformVariadic,
       DEFAULT_PLATFORM
     )
+    .addOption(
+      new Option("-s, --snapshots <mode>", "Capture snapshots of compiler output")
+        .choices(["auto", "never", "update", "deploy", "assert"])
+        .default("auto")
+    )
+    .addHelpText("afterAll", SNAPSHOTS_HELP)
     .option("-r, --rootId <rootId>", "App root id")
     .option(
       "-f, --test-filter <regex>",
       "Run tests that match the provided regex pattern within the selected entrypoint files"
     )
     .option("--no-clean", "Keep build output")
+    .option("--no-stream", "Do not stream logs")
     .option(
       "-o, --output-file <outputFile>",
       "File name to write test results to (file extension is required, supports only .json at the moment)"

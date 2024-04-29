@@ -7,6 +7,15 @@
       "include": "#template-string"
     },
     {
+      "include": "#non-interpolated-string"
+    },
+    {
+      "include": "#object-keys"
+    },
+    {
+      "include": "#members"
+    },
+    {
       "include": "#keywords"
     },
     {
@@ -23,12 +32,19 @@
     },
     {
       "include": "#identifiers"
-    },
-    {
-      "include": "#members"
     }
   ],
   "repository": {
+    "non-interpolated-string": {
+      "name": "string.quoted.double.wing",
+      "begin": "#\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
+    },
     "template-string": {
       "name": "string.quoted.double.wing",
       "begin": "\"",
@@ -184,6 +200,18 @@
           "captures": {
             "1": {
               "name": "entity.name.function.wing"
+            }
+          }
+        }
+      ]
+    },
+    "object-keys": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+          "captures": {
+            "1": {
+              "name": "variable.wing"
             }
           }
         }

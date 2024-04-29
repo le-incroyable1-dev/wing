@@ -3,7 +3,8 @@ import { ISimulatorResource } from "./resource";
 import { CounterSchema } from "./schema-resources";
 import { bindSimulatorResource, makeSimulatorJsClient } from "./util";
 import * as cloud from "../cloud";
-import { BaseResourceSchema } from "../simulator/simulator";
+import { LiftMap } from "../core";
+import { ToSimulatorOutput } from "../simulator/simulator";
 import { IInflightHost } from "../std";
 
 /**
@@ -20,30 +21,27 @@ export class Counter extends cloud.Counter implements ISimulatorResource {
   }
 
   /** @internal */
-  public _supportedOps(): string[] {
-    return [
-      cloud.CounterInflightMethods.INC,
-      cloud.CounterInflightMethods.DEC,
-      cloud.CounterInflightMethods.PEEK,
-      cloud.CounterInflightMethods.SET,
-    ];
+  public get _liftMap(): LiftMap {
+    return {
+      [cloud.CounterInflightMethods.INC]: [],
+      [cloud.CounterInflightMethods.DEC]: [],
+      [cloud.CounterInflightMethods.PEEK]: [],
+      [cloud.CounterInflightMethods.SET]: [],
+    };
   }
 
-  public toSimulator(): BaseResourceSchema {
-    const schema: CounterSchema = {
-      type: cloud.COUNTER_FQN,
-      path: this.node.path,
-      addr: this.node.addr,
-      props: {
-        initial: this.initial,
-      },
-      attrs: {} as any,
+  public toSimulator(): ToSimulatorOutput {
+    const props: CounterSchema = {
+      initial: this.initial,
     };
-    return schema;
+    return {
+      type: cloud.COUNTER_FQN,
+      props,
+    };
   }
 
   public onLift(host: IInflightHost, ops: string[]): void {
-    bindSimulatorResource(__filename, this, host);
+    bindSimulatorResource(__filename, this, host, ops);
     super.onLift(host, ops);
   }
 

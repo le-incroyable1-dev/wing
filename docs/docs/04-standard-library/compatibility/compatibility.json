@@ -869,6 +869,14 @@
       "tf-aws": {
         "implemented": true
       }
+    },
+    "subscribeQueue": {
+      "sim": {
+        "implemented": true
+      },
+      "tf-aws": {
+        "implemented": true
+      }
     }
   },
   "Schedule": {
@@ -1888,40 +1896,6 @@
   },
   "Endpoint": {
     "url": {
-      "sim": {
-        "implemented": true
-      },
-      "tf-aws": {
-        "implemented": true
-      }
-    }
-  },
-  "DynamodbTable": {
-    "putItem": {
-      "sim": {
-        "implemented": true
-      },
-      "tf-aws": {
-        "implemented": true
-      }
-    },
-    "query": {
-      "sim": {
-        "implemented": true
-      },
-      "tf-aws": {
-        "implemented": true
-      }
-    },
-    "getItem": {
-      "sim": {
-        "implemented": true
-      },
-      "tf-aws": {
-        "implemented": true
-      }
-    },
-    "transactWriteItems": {
       "sim": {
         "implemented": true
       },

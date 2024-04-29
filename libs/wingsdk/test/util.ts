@@ -131,11 +131,11 @@ export function directorySnapshot(initialRoot: string) {
         continue;
       }
       // skip sandbox entrypoints since they are mostly a duplicate of the original
-      if (f.endsWith(".sandbox.js")) {
+      if (f.endsWith(".sandbox.cjs")) {
         continue;
       }
       // skip esbuild output
-      if (f.endsWith(".js.bundle")) {
+      if (f.endsWith(".cjs.bundle")) {
         continue;
       }
 
@@ -157,6 +157,7 @@ export function directorySnapshot(initialRoot: string) {
             }
             break;
 
+          case ".cjs":
           case ".js":
             const code = readFileSync(abspath, "utf-8");
             snapshot[key] = sanitizeCode(code);
@@ -177,9 +178,15 @@ export function directorySnapshot(initialRoot: string) {
 type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
 
 export function sanitizePaths(json: DeepWriteable<WingSimulatorSchema>) {
-  for (const key of Object.keys(json.types)) {
-    const sanitized = `<ABSOLUTE PATH>/${basename(json.types[key].sourcePath)}`;
-    json.types[key].sourcePath = sanitized;
+  // replace all values in the JSON that look like absolute paths with a placeholder of "<ABSOLUTE PATH>"
+  for (const key of Object.keys(json)) {
+    if (typeof json[key] === "string") {
+      if (isAbsolute(json[key]) && key !== "pathPattern") {
+        json[key] = `<ABSOLUTE PATH>/${basename(json[key])}`;
+      }
+    } else if (typeof json[key] === "object") {
+      json[key] = sanitizePaths(json[key]);
+    }
   }
   return json;
 }

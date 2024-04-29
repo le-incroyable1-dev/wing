@@ -26,7 +26,6 @@ import {
   KeyIcon as SolidKeyIcon,
 } from "@heroicons/react/24/solid";
 
-import { DynamoDBIcon } from "../icons/dynamodb-icon.js";
 import { ReactIcon } from "../icons/react-icon.js";
 import { RedisIcon } from "../icons/redis-icon.js";
 
@@ -59,9 +58,6 @@ export const getResourceIconComponent = (
     case "@winglang/sdk.cloud.Website": {
       return solid ? SolidGlobeAltIcon : GlobeAltIcon;
     }
-    case "@winglang/sdk.ex.ReactApp": {
-      return ReactIcon;
-    }
     case "@winglang/sdk.cloud.Counter": {
       return solid ? SolidCalculatorIcon : CalculatorIcon;
     }
@@ -85,9 +81,6 @@ export const getResourceIconComponent = (
     }
     case "@winglang/sdk.cloud.Secret": {
       return solid ? SolidKeyIcon : KeyIcon;
-    }
-    case "@winglang/sdk.ex.DynamodbTable": {
-      return DynamoDBIcon;
     }
     default: {
       return CubeIcon;
@@ -235,13 +228,6 @@ export const getResourceIconColors = (options: {
         colors.violet.default,
         options.darkenOnGroupHover && colors.violet.groupHover,
         options.forceDarken && colors.violet.forceDarken,
-      ];
-    }
-    case "@winglang/sdk.ex.ReactApp": {
-      return [
-        colors.sky.default,
-        options.darkenOnGroupHover && colors.sky.groupHover,
-        options.forceDarken && colors.sky.forceDarken,
       ];
     }
     default: {

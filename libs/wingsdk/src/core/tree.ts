@@ -84,7 +84,12 @@ export interface DisplayInfo {
 }
 
 /** @internal */
-export type UIComponent = UIField | UISection | UIButton;
+export type UIComponent =
+  | UIField
+  | UISection
+  | UIButton
+  | UIHttpClient
+  | UIFileBrowser;
 
 /** @internal */
 export interface UIField {
@@ -93,6 +98,7 @@ export interface UIField {
   /** The construct path to a cloud.Function */
   readonly handler: string;
   readonly refreshRate: number | undefined;
+  readonly link?: boolean;
 }
 
 /** @internal */
@@ -108,6 +114,24 @@ export interface UISection {
   readonly kind: "section";
   readonly label?: string;
   readonly children: UIComponent[];
+}
+
+/** @internal */
+export interface UIHttpClient {
+  readonly kind: "http-client";
+  readonly label: string;
+  readonly getUrlHandler: string;
+  readonly getApiSpecHandler: string;
+}
+
+/** @internal */
+export interface UIFileBrowser {
+  readonly kind: "file-browser";
+  readonly label: string;
+  readonly putHandler: string;
+  readonly deleteHandler: string;
+  readonly getHandler: string;
+  readonly listHandler: string;
 }
 
 /**
